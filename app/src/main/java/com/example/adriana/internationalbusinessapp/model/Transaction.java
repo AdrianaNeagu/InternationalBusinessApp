@@ -28,4 +28,16 @@ public class Transaction {
     public String getCurrency() {
         return currency;
     }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 }

@@ -5,27 +5,27 @@ import com.google.gson.annotations.SerializedName;
 public class ConversionRate {
 
     @SerializedName("from")
-    private String conversionFrom;
+    private String from;
     @SerializedName("to")
-    private String conversionTo;
+    private String to;
     @SerializedName("rate")
-    private String conversionRate;
+    private String rate;
 
-    public ConversionRate(String conversionFrom, String conversionTo, String conversionRate) {
-        this.conversionFrom = conversionFrom;
-        this.conversionTo = conversionTo;
-        this.conversionRate = conversionRate;
+    public ConversionRate(String from, String to, String rate) {
+        this.from = from;
+        this.to = to;
+        this.rate = rate;
     }
 
-    public String getConversionFrom() {
-        return conversionFrom;
+    public String getFrom() {
+        return from;
     }
 
-    public String getConversionTo() {
-        return conversionTo;
+    public String getTo() {
+        return to;
     }
 
-    public String getConversionRate() {
-        return conversionRate;
+    public String getRate() {
+        return rate;
     }
 }
