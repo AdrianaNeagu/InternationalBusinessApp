@@ -11,5 +11,21 @@ public class ConversionRate {
     @SerializedName("rate")
     private String conversionRate;
 
+    public ConversionRate(String conversionFrom, String conversionTo, String conversionRate) {
+        this.conversionFrom = conversionFrom;
+        this.conversionTo = conversionTo;
+        this.conversionRate = conversionRate;
+    }
 
+    public String getConversionFrom() {
+        return conversionFrom;
+    }
+
+    public String getConversionTo() {
+        return conversionTo;
+    }
+
+    public String getConversionRate() {
+        return conversionRate;
+    }
 }
