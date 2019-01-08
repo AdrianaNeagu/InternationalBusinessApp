@@ -1,7 +1,7 @@
 package com.example.adriana.internationalbusinessapp.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -12,6 +12,8 @@ import com.example.adriana.internationalbusinessapp.model.Transaction;
 import com.example.adriana.internationalbusinessapp.rest.ApiClient;
 import com.example.adriana.internationalbusinessapp.rest.ApiInterface;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Transaction>> call, Response<List<Transaction>> response) {
                 transactionList = response.body();
                 currencyConverter();
-                recyclerView.setAdapter(new TransactionAdapter(transactionList));
+                recyclerView.setAdapter(new TransactionAdapter(transactionList, getApplicationContext()));
             }
 
             @Override
@@ -55,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<ConversionRate>> call, Response<List<ConversionRate>> response) {
                 conversionRateList = response.body();
-
             }
 
             @Override
@@ -65,23 +66,56 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    
-    public Float getConversionRate(String currency) {
-        float conversionRate = 0;
+
+
+    public Double getConvertedAmount(Transaction transaction) {
+        double conversionRate = 0;
         for (ConversionRate rate : conversionRateList) {
-            if((rate.getFrom() == currency) && (rate.getTo().contains("EUR"))) {
-                conversionRate =  Float.parseFloat(rate.getRate());
+            if ((rate.getFrom() == transaction.getCurrency()) && (rate.getTo().contains("EUR"))) {
+                conversionRate = Double.parseDouble(rate.getRate());
             } else {
 
+                ArrayList<ConversionRate> fromList = new ArrayList<>();
+                ArrayList<ConversionRate> toList = new ArrayList<>();
+
+                for (ConversionRate fromRate : conversionRateList) {
+                    if (fromRate.getFrom().equals(transaction.getCurrency())) {
+                        fromList.add(fromRate);
+                    }
+                }
+
+                for (ConversionRate toRate : conversionRateList) {
+                    if (toRate.getTo().equals("EUR")) {
+                        toList.add(toRate);
+                    }
+                }
+
+                for (ConversionRate fromRate : fromList) {
+                    for (ConversionRate toRate : toList) {
+                        if (fromRate.getTo().equals(toRate.getFrom())) {
+                            transaction.setAmount(String.valueOf(bankersRounding((Double.parseDouble(transaction.getAmount()) * Double.parseDouble(fromRate.getRate())) *
+                                    Double.parseDouble(toRate.getRate()))));
+                            break;
+                        }
+                    }
+                }
             }
-        } return conversionRate;
+        }
+        return conversionRate;
+
     }
 
+
     public void currencyConverter() {
-        for(Transaction transaction : transactionList) {
-            transaction.setAmount(String.valueOf(Float.parseFloat(transaction.getAmount()) *
-                    getConversionRate(transaction.getCurrency())));
+        for (Transaction transaction : transactionList) {
+            getConvertedAmount(transaction);
             transaction.setCurrency("EUR");
         }
+    }
+
+    public static double bankersRounding(double amount) {
+        BigDecimal bigDecimal = new BigDecimal(Double.toString(amount));
+        bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_EVEN);
+        return bigDecimal.doubleValue();
     }
 }

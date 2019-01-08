@@ -1,14 +1,20 @@
 package com.example.adriana.internationalbusinessapp.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Transaction {
+import java.io.Serializable;
+
+public class Transaction implements Serializable {
 
     @SerializedName("sku")
+    @Expose
     private String sku;
     @SerializedName("amount")
+    @Expose
     private String amount;
     @SerializedName("currency")
+    @Expose
     private String currency;
 
     public Transaction(String sku, String amount, String currency) {
